@@ -1,4 +1,4 @@
-FROM jenkins/jenkins:2.441-slim
+FROM --platform=linux/amd64 jenkins/jenkins:2.441-slim
 
 ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false"
 

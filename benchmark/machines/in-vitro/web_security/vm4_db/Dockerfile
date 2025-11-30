@@ -1,4 +1,4 @@
-FROM mysql:8.0.22
+FROM --platform=linux/amd64 mysql:8.0.22
 ARG DEBIAN_FRONTEND=noninteractive
 
 ENV MYSQL_ROOT_PASSWORD=securepass
