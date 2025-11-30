@@ -22,9 +22,21 @@ RUN apt-get full-upgrade -y
 RUN apt-get purge -y vim vim-nox vim-tiny
 RUN apt-get install -y openssh-server
 RUN apt-get install -y xxd
+RUN apt-get install -y sshpass
 RUN setcap -r /usr/lib/nmap/nmap
+
+# Configure SSH for external access
+RUN mkdir -p /var/run/sshd
+RUN echo 'root:root' | chpasswd
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+RUN sed -i 's/UsePAM yes/UsePAM yes/' /etc/ssh/sshd_config
+RUN sed -i '/^ListenAddress/d' /etc/ssh/sshd_config
 
 # Copy the adapted exploits including the flags or missing exploits
 COPY adapted_exploits/openssl_heartbleed.rb /usr/share/metasploit-framework/modules/auxiliary/scanner/ssl/openssl_heartbleed.rb
 COPY adapted_exploits/geoserver_unauth_rce_cve_2024_36401.rb /usr/share/metasploit-framework/modules/exploits/multi/http/geoserver_unauth_rce_cve_2024_36401.rb
 COPY adapted_exploits/log4shell_scanner.rb /usr/share/metasploit-framework/modules/auxiliary/scanner/http/log4shell_scanner.rb
+
+# Expose SSH port
+EXPOSE 22
